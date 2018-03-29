@@ -1,6 +1,7 @@
 import Env from './env';
 
 let config = {
-    env: Env
+    env: Env,
+    api: 'https://api.srun.com/admin/'
 };
 export default config;

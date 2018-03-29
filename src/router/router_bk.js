@@ -221,18 +221,7 @@ export const appRouter = [
         children: [
             { path: 'index', title: '错误页面', name: 'errorpage_index', component: () => import('@/views/error-page/error-page.vue') }
         ]
-    },
-  {
-    path: '/list',
-    icon: 'ios-list',
-    name: 'list',
-    title: '列表',
-    component: Main,
-    children: [
-      { path: 'list', title: '列表页', name: 'my_list', icon: 'edit', component: () => import('@/views/list/editable-table.vue') },
-      { path: 'searchableTable', title: '可搜索表格', name: 'searchable-table', icon: 'search', component: () => import('@/views/list/searchable-table.vue') }
-    ]
-  }
+    }
 ];
 
 // 所有上面定义的路由都要写在下面的routers里
