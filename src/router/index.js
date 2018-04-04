@@ -4,6 +4,9 @@ import Util from '../libs/util';
 import VueRouter from 'vue-router';
 import Cookies from 'js-cookie';
 import {routers, otherRouter, appRouter} from './router';
+import axios from 'axios';
+import config from '../../build/config';
+axios.defaults.baseURL = config.api;
 
 Vue.use(VueRouter);
 
