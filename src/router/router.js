@@ -230,7 +230,7 @@ export const appRouter = [
     component: Main,
     children: [
       { path: 'list', title: '列表页', name: 'my_list', icon: 'edit', component: () => import('@/views/list/editable-table.vue') },
-      { path: 'searchableTable', title: '可搜索表格', name: 'searchable-table', icon: 'search', component: () => import('@/views/list/searchable-table.vue') }
+      { path: 'school', title: '学校列表', name: 'school_list', icon: 'edit', component: () => import('@/views/school/editable-table.vue') }
     ]
   }
 ];
