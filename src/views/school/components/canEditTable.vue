@@ -4,7 +4,7 @@
 
 <template>
     <div>
-        <Table :ref="refs" :columns="columnsList" :data="thisTableData" border disabled-hover></Table>
+        <Table :ref="refs" :columns="columnsList" :data="thisTableData" border stripe></Table>
     </div>
 </template>
 
