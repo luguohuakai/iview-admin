@@ -72,22 +72,27 @@
                 <FormItem label="经度" prop="lng">
                     <Input elementId="lng" v-model="formItem.lng" placeholder="请输入学校经度"></Input>
                 </FormItem>
-
-
-
+                <!--<FormItem label="背景图" prop="login_bg">-->
+                    <!--<Input elementId="login_bg" v-model="formItem.login_bg" type="file"></Input>-->
+                <!--</FormItem>-->
+                <!--<FormItem label="Logo" prop="logo">-->
+                    <!--<Input elementId="logo" v-model="formItem.logo" type="file"></Input>-->
+                    <!--&lt;!&ndash;<input type="file" name="logo" id="logo" v-model="formItem.logo">&ndash;&gt;-->
+                <!--</FormItem>-->
                 <FormItem label="颜色" prop="color">
                     <ColorPicker v-model="formItem.color"/>
                 </FormItem>
 
                 <FormItem label="Logo" prop="logo">
-                    <Upload
-                            :before-upload="handleUpload"
-                            action="//jsonplaceholder.typicode.com/posts/">
-                        <Button type="ghost" icon="ios-cloud-upload-outline">选择图片</Button>
-                    </Upload>
+                    <div>
+                        <Upload
+                                :before-upload="handleUpload"
+                                action="//jsonplaceholder.typicode.com/posts/">
+                            <Button type="ghost" icon="ios-cloud-upload-outline">Select the file to upload</Button>
+                        </Upload>
+                        <div v-if="file !== null">Upload file: {{ file.name }} <Button type="text" @click="upload" :loading="loadingStatus">{{ loadingStatus ? 'Uploading' : 'Click to upload' }}</Button></div>
+                    </div>
                 </FormItem>
-
-
 
             </Form>
             <div slot="footer">
@@ -112,6 +117,8 @@
     },
     data () {
       return {
+          file: null,
+          loadingStatus: false,
         editInlineColumns: [],
         editInlineData: [],
         total: 0,
@@ -155,6 +162,18 @@
         // console.log(val);
         this.$Message.success('修改了第' + (index + 1) + '行数据:');
       },
+        handleUpload (file) {
+            this.file = file;
+            return false;
+        },
+        upload () {
+            this.loadingStatus = true;
+            setTimeout(() => {
+                this.file = null;
+                this.loadingStatus = false;
+                this.$Message.success('Success')
+            }, 1500);
+        },
       setColumns () {
         this.editInlineColumns = [
           {
@@ -267,10 +286,6 @@
       cancel () {
         this.modalSetting.show = false;
       },
-      handleUpload (file) {
-        this.file = file;
-        return false;
-      },
       submit () {
         let self = this;
         this.$refs['myForm'].validate((valid) => {
@@ -278,19 +293,28 @@
             self.modalSetting.loading = true;
             let target = '';
             if (this.formItem.id === 0) {
-              target = 'InterfaceList/add';
+              target = 'school';
+                axios.post(target, self.formItem).then(function (response) {
+                    if (response.data.code === 1) {
+                        self.$Message.success(response.data.msg);
+                    } else {
+                        self.$Message.error(response.data.msg);
+                    }
+                    self.setData();
+                    self.cancel();
+                });
             } else {
-              target = 'InterfaceList/edit';
+              target = 'school/' + this.formItem.id;
+                axios.put(target, self.formItem).then(function (response) {
+                    if (response.data.code === 1) {
+                        self.$Message.success(response.data.msg);
+                    } else {
+                        self.$Message.error(response.data.msg);
+                    }
+                    self.setData();
+                    self.cancel();
+                });
             }
-            axios.post(target, self.formItem).then(function (response) {
-              if (response.data.code === 1) {
-                self.$Message.success(response.data.msg);
-              } else {
-                self.$Message.error(response.data.msg);
-              }
-              self.getList();
-              self.cancel();
-            });
           }
         });
       }
@@ -306,10 +330,14 @@
     let loc = event.data;
     if (loc && loc.module === 'locationPicker') {
       // 防止其他应用也会向该页面post信息，需判断module是否为'locationPicker'
-      document.getElementById('name').value = loc.poiname;
-      document.getElementById('addr').value = loc.poiaddress;
-      document.getElementById('lat').value = loc.latlng.lat;
-      document.getElementById('lng').value = loc.latlng.lng;
+        this.default.data.formItem.name = loc.poiname;
+        this.default.data.formItem.addr = loc.poiaddress;
+        this.default.data.formItem.lat = loc.latlng.lat;
+        this.default.data.formItem.lng = loc.latlng.lng;
+      // document.getElementById('name').value = loc.poiname;
+      // document.getElementById('addr').value = loc.poiaddress;
+      // document.getElementById('lat').value = loc.latlng.lat;
+      // document.getElementById('lng').value = loc.latlng.lng;
     }
   }, false);
 </script>

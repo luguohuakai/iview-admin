@@ -92,12 +92,12 @@ export default {
         handleChange (val, index) {
             this.$Message.success('修改了第' + (index + 1) + '行数据');
         },
-        getList(){
+        getList () {
             axios.get('ac').then(res => {
                 this.editInlineData = res.data.data.data;
             });
         },
-        setColumns(){
+        setColumns () {
             this.editInlineColumns = [
                 {
                     title: '序号',
@@ -139,8 +139,7 @@ export default {
                     handle: ['edit', 'delete']
                 }
             ];
-        },
-
+        }
 
     },
     // 页面一加载就执行的方法
