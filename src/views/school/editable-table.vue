@@ -87,10 +87,12 @@
                     <div>
                         <Upload
                                 :before-upload="handleUpload"
-                                action="//jsonplaceholder.typicode.com/posts/">
-                            <Button type="ghost" icon="ios-cloud-upload-outline">Select the file to upload</Button>
+                                action=""
+                                v-model="formItem.logo"
+                                name="logo">
+                            <Button type="ghost" icon="ios-cloud-upload-outline">选择文件</Button>
                         </Upload>
-                        <div v-if="file !== null">Upload file: {{ file.name }} <Button type="text" @click="upload" :loading="loadingStatus">{{ loadingStatus ? 'Uploading' : 'Click to upload' }}</Button></div>
+                        <span v-if="file !== null">{{ file.name }}</span>
                     </div>
                 </FormItem>
 
@@ -294,6 +296,7 @@
             let target = '';
             if (this.formItem.id === 0) {
               target = 'school';
+              self.formItem.append('logo', self.file);
                 axios.post(target, self.formItem).then(function (response) {
                     if (response.data.code === 1) {
                         self.$Message.success(response.data.msg);
@@ -320,24 +323,20 @@
       }
     },
     created () {
+        let that = this;
       this.setColumns();
       this.setData();
+      window.addEventListener('message', function (event) {
+            // 接收位置信息，用户选择确认位置点后选点组件会触发该事件，回传用户的位置信息
+            let loc = event.data;
+            if (loc && loc.module === 'locationPicker') {
+                // 防止其他应用也会向该页面post信息，需判断module是否为'locationPicker'
+                that.formItem.name = loc.poiname;
+                that.formItem.addr = loc.poiaddress;
+                that.formItem.lat = loc.latlng.lat;
+                that.formItem.lng = loc.latlng.lng;
+            }
+        }, false);
     }
   };
-
-  window.addEventListener('message', function (event) {
-    // 接收位置信息，用户选择确认位置点后选点组件会触发该事件，回传用户的位置信息
-    let loc = event.data;
-    if (loc && loc.module === 'locationPicker') {
-      // 防止其他应用也会向该页面post信息，需判断module是否为'locationPicker'
-        this.default.data.formItem.name = loc.poiname;
-        this.default.data.formItem.addr = loc.poiaddress;
-        this.default.data.formItem.lat = loc.latlng.lat;
-        this.default.data.formItem.lng = loc.latlng.lng;
-      // document.getElementById('name').value = loc.poiname;
-      // document.getElementById('addr').value = loc.poiaddress;
-      // document.getElementById('lat').value = loc.latlng.lat;
-      // document.getElementById('lng').value = loc.latlng.lng;
-    }
-  }, false);
 </script>
