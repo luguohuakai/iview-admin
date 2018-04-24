@@ -1,4 +1,5 @@
-import Main from '@/views/Main.vue'
+import Main from '@/views/Main.vue';
+import auth from '../libs/auth';
 
 // 不作为Main组件的子页面展示的页面单独写，如下
 export const loginRouter = {
@@ -89,7 +90,7 @@ export const appRouter = [
     component: Main,
     children: [
       {path: 'index', title: '权限管理', name: 'access_index', component: () => import('@/views/access/access.vue')},
-      {path: 'admin', title: '管理员管理', name: 'admin_index', component: () => import('@/views/access/admin_list.vue')}
+      // {path: 'admin', title: '管理员管理', name: 'admin_index', component: () => import('@/views/access/admin_list.vue')}
     ]
   },
   {
@@ -324,6 +325,7 @@ export const appRouter = [
     icon: 'ios-list',
     name: 'list',
     title: '列表',
+    access: 0,
     component: Main,
     children: [
       {
@@ -331,6 +333,7 @@ export const appRouter = [
         title: '列表页',
         name: 'my_list',
         icon: 'edit',
+        access: auth.access('admin/mp.Ac/index'),
         component: () => import('@/views/list/editable-table.vue')
       },
       {
@@ -338,6 +341,7 @@ export const appRouter = [
         title: '学校列表',
         name: 'school_list',
         icon: 'edit',
+        access: auth.access('admin/school/index'),
         component: () => import('@/views/school/editable-table.vue')
       }
     ]

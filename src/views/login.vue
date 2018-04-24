@@ -12,8 +12,8 @@
                 </p>
                 <div class="form-con">
                     <Form ref="loginForm" :model="form" :rules="rules">
-                        <FormItem prop="userName">
-                            <Input v-model="form.userName" placeholder="请输入用户名">
+                        <FormItem prop="username">
+                            <Input v-model="form.username" placeholder="请输入用户名">
                                 <span slot="prepend">
                                     <Icon :size="16" type="person"></Icon>
                                 </span>
@@ -39,15 +39,16 @@
 
 <script>
 import Cookies from 'js-cookie';
+import axios from 'axios';
 export default {
     data () {
         return {
             form: {
-                userName: 'iview_admin',
+                username: 'root',
                 password: ''
             },
             rules: {
-                userName: [
+                username: [
                     { required: true, message: '账号不能为空', trigger: 'blur' }
                 ],
                 password: [
@@ -59,19 +60,30 @@ export default {
     methods: {
         handleSubmit () {
             this.$refs.loginForm.validate((valid) => {
-                if (valid) {
-                    Cookies.set('user', this.form.userName);
-                    Cookies.set('password', this.form.password);
-                    this.$store.commit('setAvator', 'https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=3448484253,3685836170&fm=27&gp=0.jpg');
-                    if (this.form.userName === 'iview_admin') {
-                        Cookies.set('access', 0);
-                    } else {
-                        Cookies.set('access', 1);
-                    }
-                    this.$router.push({
-                        name: 'home_index'
+              if (valid) {
+                let vm = this;
+                axios.post('admin/Login/index', {
+                  username: vm.form.username,
+                  password: vm.form.password
+                }).then(function (response) {
+                  let data = response.data;
+                  if (data.code === 1) {
+                    Cookies.set('user', vm.form.username);
+                    Cookies.set('password', vm.form.password);
+                    vm.$store.commit('setAvator', 'https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=3448484253,3685836170&fm=27&gp=0.jpg');
+
+                    localStorage.accesses = JSON.stringify(data.data.access);
+
+                    vm.$store.commit('login', response.data.data);
+                    vm.$Message.success(response.data.msg);
+                    vm.$router.push({
+                      name: 'home_index'
                     });
-                }
+                  } else {
+                    vm.$Message.error(response.data.msg);
+                  }
+                });
+              }
             });
         }
     }
